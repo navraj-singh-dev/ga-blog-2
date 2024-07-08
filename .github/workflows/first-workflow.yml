@@ -1,0 +1,52 @@
+name: lint-test-build-deploy-workflow # the internal name of workflow
+
+on: push # this workflow will get triggered automatically when a push event happens, like when a git push is run
+
+jobs: # under this key we define all of our jobs
+  lint: # this is a custom name of our job, name can be anything decided by us
+    runs-on: ubuntu-latest # it means which runner (a machine) will be used to run the 'lint' job specifically.
+    steps: # all steps are defined under this key
+      - name: install nodejs #  name of the first step
+        uses: actions/setup-node@v4 # the action to be run, it install nodejs on for us on the runner machine
+      - name: get the code of repository # name of the second step
+        uses: actions/checkout@v4 # this action downloads our current github repository code to the runner machine
+      - name: install dependencies # name of third step
+        run: npm ci # this is a command which will install dependencies in the runner machine
+      - name: run linting # name of fourth step
+        run: npm run lint # a command which runs a lint script from the project to lint the code in runner machine
+
+  test: # second job, it runs test script to test the code
+    runs-on: ubuntu-latest # defining the runner machine on which this test job will run
+    steps: # all the steps of this job
+      - name: install nodejs # again on this runner machine install the nodejs
+        uses: actions/setup-node@v4
+      - name: get the code of repository # again on this runner machine download the repository code
+        uses: actions/checkout@v4
+      - name: install dependencies # again install dependencies on the runner
+        run: npm ci
+      - name: run test # now as we have everything, run the test script using this command and test the code
+        run: npm run test
+
+  build: # third job, it runs build script to build the code
+    runs-on: ubuntu-latest # defining runner machine for this job
+    steps: # all steps of this job
+      - name: install nodejs # installing node in this runner machine
+        uses: actions/setup-node@v4 # action to install nodejs
+      - name: get the code of repository # downloading code in this runner machine
+        uses: actions/checkout@v4 # action to download the code
+      - name: install dependencies # installing dependencies in runner machine
+        run: npm ci # command to install dependencies
+      - name: build the code # buiding the code
+        run: npm run build # command to build the code
+
+  deploy: # fourth job, it fakes the deployment of our project code
+    runs-on: ubuntu-latest # defining runner machine for this job
+    steps: # all steps of this job
+      - name: install nodejs # installing node in this runner machine
+        uses: actions/setup-node@v4 # action to install nodejs
+      - name: get the code of repository # downloading code in this runner machine
+        uses: actions/checkout@v4 # action to download the code
+      - name: install dependencies # installing dependencies in runner machine
+        run: npm ci # command to install dependencies
+      - name: deploy the code # fake deploying the code
+        run: echo "deploying..." # command to fake deploy the code
