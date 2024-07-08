@@ -14,9 +14,10 @@ jobs: # under this key we define all of our jobs
         run: npm ci # this is a command which will install dependencies in the runner machine
       - name: run linting # name of fourth step
         run: npm run lint # a command which runs a lint script from the project to lint the code in runner machine
-
+  
   test: # second job, it runs test script to test the code
     runs-on: ubuntu-latest # defining the runner machine on which this test job will run
+    needs: lint # this job depends on lint job, if lint job is successfully run only then this job will run
     steps: # all the steps of this job
       - name: install nodejs # again on this runner machine install the nodejs
         uses: actions/setup-node@v4
@@ -29,6 +30,7 @@ jobs: # under this key we define all of our jobs
 
   build: # third job, it runs build script to build the code
     runs-on: ubuntu-latest # defining runner machine for this job
+    needs: test # this job depends on test job, if test job is successfully run only then this job will run
     steps: # all steps of this job
       - name: install nodejs # installing node in this runner machine
         uses: actions/setup-node@v4 # action to install nodejs
@@ -41,6 +43,7 @@ jobs: # under this key we define all of our jobs
 
   deploy: # fourth job, it fakes the deployment of our project code
     runs-on: ubuntu-latest # defining runner machine for this job
+    needs: build # this job depends on build job, if build job is successfully run only then this job will run
     steps: # all steps of this job
       - name: install nodejs # installing node in this runner machine
         uses: actions/setup-node@v4 # action to install nodejs
